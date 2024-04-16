@@ -14,7 +14,7 @@ if (!$conn) {
 echo "Connessione riuscita";
 
 $inputUsername = isset($_POST['username']) ? htmlspecialchars($_POST['username']) : '';
-$inputPassword = isset($_POST['password']) ? password_hash($_POST['password'], PASSWORD_DEFAULT) : '';
+$inputPassword = isset($_POST['password']) ? $_POST['password'] : '';
 
 /* if (isset($inputPassword) && isset($inputUsername)) {
     echo $inputPassword;
@@ -22,7 +22,7 @@ $inputPassword = isset($_POST['password']) ? password_hash($_POST['password'], P
 } */
 
 /* Creo la query con i parametri da ricercare come '?' */
-$sql = "SELECT * FROM `users` WHERE `users`.`username` = ? ";
+$sql = "SELECT `password` FROM `users` WHERE `users`.`username` = ? ";
 /*
  preparo l'invio al server
  Sostituisco i parametri '?' con la variabile inserita dall'utente
@@ -34,8 +34,22 @@ mysqli_stmt_bind_param($usersStmt, "s", $inputUsername);
 mysqli_stmt_execute($usersStmt);
 $results = mysqli_stmt_get_result($usersStmt);
 
-if (mysqli_num_rows($results) > 0) {
-    echo 'Utente Trovato';
+/* se rerults esiste
+    $row restituisce la chiave 'password' con valore hashato nel database.
+    se $row esiste:
+        verifico la password inserita dall'utente con la password hashata che coincide con il suo username
+ */
+if ($results) {
+    $row = mysqli_fetch_assoc($results);
+    if ($row) {
+        if (password_verify($inputPassword, $row['password'])) {
+            echo 'Utente Loggato';
+        } else {
+            echo 'Utente non registrato o credenziali errate';
+        }
+    } else {
+        echo 'Utente non registrato o credenziali errate';
+    }
 } else {
-    echo 'Utente non registrato';
+    echo 'Errore nel recuperare i risultati della query';
 }
