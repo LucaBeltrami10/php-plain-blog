@@ -4,7 +4,7 @@ $inputUsername = isset($_POST['username']) ? htmlspecialchars($_POST['username']
 $inputPassword = isset($_POST['password']) ? $_POST['password'] : '';
 
 /* Creo la query con i parametri da ricercare come '?' */
-$sql = "SELECT `password` FROM `users` WHERE `users`.`username` = ? ";
+$sql = "SELECT * FROM `users` WHERE `users`.`username` = ? ";
 /*
  preparo l'invio al server
  Sostituisco i parametri '?' con la variabile inserita dall'utente

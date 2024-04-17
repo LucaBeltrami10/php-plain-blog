@@ -1,6 +1,6 @@
 <?php
 include 'server.php';
 session_start();
-unset($_SESSION['userLogged']);
+$_SESSION['userLogged'] = false;
 header("Location: login.php");
 exit();
